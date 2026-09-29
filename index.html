@@ -11,8 +11,13 @@
 </head>
 <body>
 
+
 <nav aria-label="Secciones">
-  <a href="#inicio">Inicio</a><a href="#viaje">Nuestro viaje</a><a href="#itinerario">Itinerario</a><a href="#musica">Música</a><a href="#rsvp" hidden>Confirmar</a><a href="#mapa">Ubicación</a>
+  <a class="brand" href="#inicio">W &amp; E</a>
+  <button class="burger" id="burger" aria-expanded="false" aria-controls="menu" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+  <div class="menu" id="menu">
+    <a href="#inicio">Inicio</a><a href="#viaje">Nuestro viaje</a><a href="#itinerario">Itinerario</a><a href="#musica">Música</a><a href="#rsvp" hidden>Confirmar</a><a href="#mapa">Ubicación</a>
+  </div>
 </nav>
 
 <header class="hero" id="inicio">
@@ -64,8 +69,8 @@
 
 <section id="rsvp" hidden>
   <div class="wrap">
-    <h2>Confirma tu asistencia</h2>
-    <p class="lead">Nos hará muy felices contar contigo. Por favor confirma antes del 21 de enero de 2027.</p>
+    <h2 id="rsvp-h">Confirma tu asistencia</h2>
+    <p class="lead" id="rsvp-lead">Nos hará muy felices contar contigo. Por favor confirma antes del 21 de enero de 2027.</p>
     <form id="form">
       <label>Nombre completo <input type="text" id="nombre" required autocomplete="name"></label>
       <fieldset><legend>¿Nos acompañas?</legend>
@@ -77,6 +82,7 @@
       <button class="btn" type="submit">Enviar confirmación</button>
       <p class="msg" id="msg" role="status"></p>
     </form>
+<div class="reservado" id="reservado" hidden></div>
   </div>
 </section>
 

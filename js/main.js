@@ -1,5 +1,4 @@
 /* ====== EDITA AQUÍ ====== */
-//var WHATSAPP = "+50376194982";  // tu número con código de país, sin +, ej: "50370000000"
 var FECHA = "2027-02-21T00:00:00-06:00"; // hora de El Salvador
 var FOTOS = [       // src vacío = imagen de ejemplo; pon tu foto (ruta o data:URI)
   {src:"",alt:"Foto 1",cap:"Cuando nos conocimos",c:"tall"},
@@ -37,6 +36,15 @@ var $=function(id){return document.getElementById(id)};
   btns.forEach(function(b){b.onclick=function(){set(b.dataset.p)}});
   var s="champan";try{s=localStorage.getItem("paleta")||"champan"}catch(e){}
   set(s);
+})();
+
+// Menú móvil
+(function(){
+  var b=$("burger"),m=$("menu");
+  function cerrar(){m.classList.remove("open");b.setAttribute("aria-expanded","false");b.setAttribute("aria-label","Abrir menú")}
+  b.onclick=function(){var o=m.classList.toggle("open");b.setAttribute("aria-expanded",o);b.setAttribute("aria-label",o?"Cerrar menú":"Abrir menú")};
+  m.addEventListener("click",function(e){if(e.target.closest("a"))cerrar()});
+  document.addEventListener("keydown",function(e){if(e.key==="Escape")cerrar()});
 })();
 
 // Cuenta regresiva
@@ -144,17 +152,42 @@ var TOKEN=new URLSearchParams(location.search).get("i");
 function cargarInvitacion(){
   return fetch(SHEETS_URL+"?i="+encodeURIComponent(TOKEN)+"&t="+Date.now()).then(function(r){return r.json()});
 }
+// Muestra el formulario o la tarjeta de "lugar reservado" según la respuesta guardada
+function estadoRsvp(d){
+  var form=$("form"),caja=$("reservado"),lead=$("rsvp-lead"),h=$("rsvp-h"),
+      listo=d.asistencia==="Sí"||d.asistencia==="No";
+  function verFormulario(){
+    form.hidden=false;lead.hidden=false;caja.hidden=true;
+    h.textContent=listo?"Cambia tu respuesta":"Confirma tu asistencia";
+    $("msg").textContent="";
+  }
+  if(!listo){verFormulario();return}
+  form.hidden=true;lead.hidden=true;caja.hidden=false;
+  h.textContent="Tu confirmación";
+  caja.innerHTML='<b></b><p></p><button type="button" class="cambiar">Cambiar mi respuesta</button>';
+  caja.querySelector("b").textContent=d.asistencia==="Sí"?"¡Tu lugar está reservado!":"Gracias por avisarnos";
+  caja.querySelector("p").textContent=d.asistencia==="Sí"
+    ?(d.personas===1?"Reservamos 1 lugar a tu nombre.":"Reservamos "+d.personas+" lugares a tu nombre.")+" Te esperamos el 21 de febrero."
+    :"Lamentamos que no puedas acompañarnos. Te vamos a extrañar.";
+  caja.querySelector(".cambiar").onclick=function(){
+    document.querySelectorAll("input[name=asiste]").forEach(function(r){r.checked=r.value.indexOf(d.asistencia)===0});
+    $("pers").value=d.asistencia==="Sí"?d.personas:d.asientos;
+    $("nota").value=d.nota||"";
+    verFormulario();
+  };
+}
+
 function mostrarInvitacion(d){
   var para=$("para"),p=$("pers");
   para.hidden=false;
   para.innerHTML="Invitación para<b></b><span></span>";
   para.querySelector("b").textContent=d.nombre;
   para.querySelector("span").textContent=d.asientos===1?"Tienes 1 lugar reservado":"Tienes "+d.asientos+" lugares reservados";
-  p.max=d.asientos;p.value=d.personas||d.asientos;
+  p.max=d.asientos;p.value=d.asientos;
   p.closest("label").style.display=d.asientos===1?"none":"";
   $("rsvp").hidden=false;
   document.querySelector('nav a[href="#rsvp"]').hidden=false;
-  $("msg").textContent=d.asistencia==="Sí"?"Ya confirmaste "+d.personas+" lugar(es). Puedes cambiarlo aquí.":d.asistencia==="No"?"Nos avisaste que no podrás asistir. Puedes cambiarlo aquí.":"";
+  estadoRsvp(d);
 }
 if(TOKEN){
   cargarInvitacion().then(function(d){
@@ -174,9 +207,8 @@ $("form").addEventListener("submit",function(ev){
   fetch(SHEETS_URL,{method:"POST",mode:"no-cors",body:datos})
     .then(cargarInvitacion)
     .then(function(d){
-      msg.textContent=d.ok&&d.asistencia
-        ?(d.asistencia==="Sí"?"¡Gracias! Confirmamos "+d.personas+" lugar(es) a tu nombre.":"Gracias por avisarnos. Te vamos a extrañar.")
-        :"No pudimos guardar tu respuesta. Inténtalo de nuevo.";
+      if(d.ok&&d.asistencia)estadoRsvp(d);
+      else msg.textContent="No pudimos guardar tu respuesta. Inténtalo de nuevo.";
     })
     .catch(function(){msg.textContent="No se pudo enviar. Revisa tu conexión e inténtalo de nuevo."})
     .then(function(){btn.disabled=false});
