@@ -139,22 +139,45 @@ au.volume=0.3;
   intentar();
 })();
 
-// Confirmación (se guarda en Google Sheets)
+// Invitación personalizada (solo se activa con ?i=CODIGO)
+var TOKEN=new URLSearchParams(location.search).get("i");
+function cargarInvitacion(){
+  return fetch(SHEETS_URL+"?i="+encodeURIComponent(TOKEN)+"&t="+Date.now()).then(function(r){return r.json()});
+}
+function mostrarInvitacion(d){
+  var para=$("para"),p=$("pers");
+  para.hidden=false;
+  para.innerHTML="Invitación para<b></b><span></span>";
+  para.querySelector("b").textContent=d.nombre;
+  para.querySelector("span").textContent=d.asientos===1?"Tienes 1 lugar reservado":"Tienes "+d.asientos+" lugares reservados";
+  p.max=d.asientos;p.value=d.personas||d.asientos;
+  p.closest("label").style.display=d.asientos===1?"none":"";
+  $("rsvp").hidden=false;
+  document.querySelector('nav a[href="#rsvp"]').hidden=false;
+  $("msg").textContent=d.asistencia==="Sí"?"Ya confirmaste "+d.personas+" lugar(es). Puedes cambiarlo aquí.":d.asistencia==="No"?"Nos avisaste que no podrás asistir. Puedes cambiarlo aquí.":"";
+}
+if(TOKEN){
+  cargarInvitacion().then(function(d){
+    if(d.ok)mostrarInvitacion(d);
+    else{$("para").hidden=false;$("para").textContent="Este código de invitación no es válido."}
+  }).catch(function(){});
+}
+
+// Confirmación (se guarda en la fila del invitado)
 $("form").addEventListener("submit",function(ev){
   ev.preventDefault();
-  var n=$("nombre").value.trim();if(!n)return;
+  if(!TOKEN)return;
   var f=ev.target,btn=f.querySelector("button[type=submit]"),msg=$("msg"),
-      asiste=document.querySelector("input[name=asiste]:checked").value;
-  if(!SHEETS_URL||SHEETS_URL.indexOf("PEGA_AQUI")===0){msg.textContent="Falta configurar el envío.";return}
-  var datos=new URLSearchParams({
-    nombre:n,
-    asiste:asiste,
-    personas:asiste.indexOf("Sí")===0?$("pers").value:0,
-    nota:$("nota").value.trim()
-  });
+      asiste=document.querySelector("input[name=asiste]:checked").value,
+      datos=new URLSearchParams({i:TOKEN,asiste:asiste,personas:$("pers").value,nota:$("nota").value.trim()});
   btn.disabled=true;msg.textContent="Enviando…";
   fetch(SHEETS_URL,{method:"POST",mode:"no-cors",body:datos})
-    .then(function(){msg.textContent="¡Gracias, "+n.split(" ")[0]+"! Tu confirmación fue enviada.";f.reset()})
+    .then(cargarInvitacion)
+    .then(function(d){
+      msg.textContent=d.ok&&d.asistencia
+        ?(d.asistencia==="Sí"?"¡Gracias! Confirmamos "+d.personas+" lugar(es) a tu nombre.":"Gracias por avisarnos. Te vamos a extrañar.")
+        :"No pudimos guardar tu respuesta. Inténtalo de nuevo.";
+    })
     .catch(function(){msg.textContent="No se pudo enviar. Revisa tu conexión e inténtalo de nuevo."})
     .then(function(){btn.disabled=false});
 });

@@ -127,3 +127,6 @@ footer b{display:block;font-family:"Great Vibes",cursive;font-weight:400;font-si
 .pal button{width:24px;height:24px;border-radius:50%;border:2px solid var(--bg);outline:1px solid var(--line);cursor:pointer;padding:0}
 .pal button[aria-pressed="true"]{outline:2px solid var(--accent)}
 @media(prefers-reduced-motion:reduce){.app{transition:none}html{scroll-behavior:auto}.disc.on{animation:none}.ph img,.ph::before,.ph span,.lb,.lb img{transition:none}}
+.para{font-size:1.25rem;font-style:italic;margin-bottom:6px!important}
+.para b{display:block;font-family:"Great Vibes",cursive;font-weight:400;font-style:normal;font-size:clamp(2.2rem,8vw,3.2rem);line-height:1.2}
+.para span{display:block;color:var(--accent)}
