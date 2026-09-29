@@ -1,5 +1,5 @@
 /* ====== EDITA AQUÍ ====== */
-var WHATSAPP = "+50376194982";  // tu número con código de país, sin +, ej: "50370000000"
+//var WHATSAPP = "+50376194982";  // tu número con código de país, sin +, ej: "50370000000"
 var FECHA = "2027-02-21T00:00:00-06:00"; // hora de El Salvador
 var FOTOS = [       // src vacío = imagen de ejemplo; pon tu foto (ruta o data:URI)
   {src:"",alt:"Foto 1",cap:"Cuando nos conocimos",c:"tall"},
@@ -22,6 +22,7 @@ var ITINERARIO = [
 var CANCIONES = [ // {t:"Título", a:"Artista", src:"archivo.mp3"}
   {t:"Nuestra canción", a:"Ojala que si - Ale Zeguer", src:"musica/Ojala_que_si.mp3"}
 ];
+var SHEETS_URL = "https://script.google.com/macros/s/AKfycbwfyzlmakCYVzsUO0PftibgO6JGFEVp_VRxES7nzqB553fXQHQfVznBU72u3gEWfnkx/exec";
 /* ========================= */
 var $=function(id){return document.getElementById(id)};
 
@@ -138,12 +139,22 @@ au.volume=0.5;
   intentar();
 })();
 
-// Confirmación (se envía por WhatsApp)
+// Confirmación (se guarda en Google Sheets)
 $("form").addEventListener("submit",function(ev){
   ev.preventDefault();
   var n=$("nombre").value.trim();if(!n)return;
-  var a=document.querySelector("input[name=asiste]:checked").value,per=$("pers").value,nota=$("nota").value.trim(),
-      txt="Hola, soy "+n+". "+a+(a.indexOf("Sí")===0?" ("+per+" persona"+(per>1?"s":"")+")":"")+"."+(nota?" Nota: "+nota:"");
-  window.open("https://wa.me/"+WHATSAPP+"?text="+encodeURIComponent(txt),"_blank","noopener");
-  $("msg").textContent="¡Gracias, "+n.split(" ")[0]+"! Envía el mensaje en WhatsApp para completar tu confirmación.";
+  var f=ev.target,btn=f.querySelector("button[type=submit]"),msg=$("msg"),
+      asiste=document.querySelector("input[name=asiste]:checked").value;
+  if(!SHEETS_URL||SHEETS_URL.indexOf("PEGA_AQUI")===0){msg.textContent="Falta configurar el envío.";return}
+  var datos=new URLSearchParams({
+    nombre:n,
+    asiste:asiste,
+    personas:asiste.indexOf("Sí")===0?$("pers").value:0,
+    nota:$("nota").value.trim()
+  });
+  btn.disabled=true;msg.textContent="Enviando…";
+  fetch(SHEETS_URL,{method:"POST",mode:"no-cors",body:datos})
+    .then(function(){msg.textContent="¡Gracias, "+n.split(" ")[0]+"! Tu confirmación fue enviada.";f.reset()})
+    .catch(function(){msg.textContent="No se pudo enviar. Revisa tu conexión e inténtalo de nuevo."})
+    .then(function(){btn.disabled=false});
 });
