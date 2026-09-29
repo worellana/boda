@@ -106,7 +106,7 @@ $("tl").innerHTML=ITINERARIO.map(function(i){
 // Reproductor
 (function(){
   var i=0,au=new Audio(),play=$("play"),seek=$("seek"),disc=$("disc");
-au.volume=0.5;
+au.volume=0.3;
   function fmt(x){x=Math.floor(x||0);return Math.floor(x/60)+":"+String(x%60).padStart(2,"0")}
   function setPlaying(v){play.innerHTML=v?"&#10074;&#10074;":"&#9654;";play.setAttribute("aria-label",v?"Pausar":"Reproducir");disc.classList.toggle("on",v)}
   function load(n){
