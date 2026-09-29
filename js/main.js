@@ -1,5 +1,5 @@
 /* ====== EDITA AQUÍ ====== */
-var WHATSAPP = "";  // tu número con código de país, sin +, ej: "50370000000"
+var WHATSAPP = "+50376194982";  // tu número con código de país, sin +, ej: "50370000000"
 var FECHA = "2027-02-21T00:00:00-06:00"; // hora de El Salvador
 var FOTOS = [       // src vacío = imagen de ejemplo; pon tu foto (ruta o data:URI)
   {src:"",alt:"Foto 1",cap:"Cuando nos conocimos",c:"tall"},
@@ -20,7 +20,7 @@ var ITINERARIO = [
   ["9:00 pm","Cierre","Gracias por acompañarnos."]
 ];
 var CANCIONES = [ // {t:"Título", a:"Artista", src:"archivo.mp3"}
-  {t:"Nuestra canción", a:"Ale Zeguer", src:"musica/Ojala_que_si.mp3"}
+  {t:"Nuestra canción", a:"Ojala que si - Ale Zeguer", src:"musica/Ojala_que_si.mp3"}
 ];
 /* ========================= */
 var $=function(id){return document.getElementById(id)};
@@ -105,6 +105,7 @@ $("tl").innerHTML=ITINERARIO.map(function(i){
 // Reproductor
 (function(){
   var i=0,au=new Audio(),play=$("play"),seek=$("seek"),disc=$("disc");
+au.volume=0.5;
   function fmt(x){x=Math.floor(x||0);return Math.floor(x/60)+":"+String(x%60).padStart(2,"0")}
   function setPlaying(v){play.innerHTML=v?"&#10074;&#10074;":"&#9654;";play.setAttribute("aria-label",v?"Pausar":"Reproducir");disc.classList.toggle("on",v)}
   function load(n){
@@ -122,6 +123,19 @@ $("tl").innerHTML=ITINERARIO.map(function(i){
   au.onended=function(){if(CANCIONES.length>1){load(i+1);au.play().then(function(){setPlaying(true)})}else setPlaying(false)};
   seek.oninput=function(){if(au.duration)au.currentTime=seek.value/100*au.duration};
   load(0);
+// Reproducción automática (o al primer toque si el navegador la bloquea)
+  var EVENTOS=["pointerdown","keydown","touchend"];
+  function quitar(){EVENTOS.forEach(function(ev){document.removeEventListener(ev,alPrimerToque)})}
+  function intentar(){
+    if(!au.src||!au.paused)return;
+    au.play().then(function(){setPlaying(true);quitar()}).catch(function(){});
+  }
+  function alPrimerToque(e){
+    if(e.target.closest("#play")){quitar();return} // si toca el botón, su propio play se encarga
+    intentar();
+  }
+  EVENTOS.forEach(function(ev){document.addEventListener(ev,alPrimerToque)});
+  intentar();
 })();
 
 // Confirmación (se envía por WhatsApp)
