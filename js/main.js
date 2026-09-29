@@ -20,7 +20,7 @@ var ITINERARIO = [
   ["9:00 pm","Cierre","Gracias por acompañarnos."]
 ];
 var CANCIONES = [ // {t:"Título", a:"Artista", src:"archivo.mp3"}
-  {t:"Nuestra canción", a:"Artista", src:""}
+  {t:"Nuestra canción", a:"Ale Zeguer", src:"musica/Ojala_que_si.mp3"}
 ];
 /* ========================= */
 var $=function(id){return document.getElementById(id)};
