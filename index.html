@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Williams & Elizabeth · 21 de febrero de 2027</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<nav aria-label="Secciones">
+  <a href="#inicio">Inicio</a><a href="#viaje">Nuestro viaje</a><a href="#itinerario">Itinerario</a><a href="#musica">Música</a><a href="#rsvp">Confirmar</a><a href="#mapa">Ubicación</a>
+</nav>
+
+<header class="hero" id="inicio">
+  <p>Nos casamos</p>
+  <h1>Williams<span>&amp;</span>Elizabeth</h1>
+  <p class="date">Domingo 21 de febrero de 2027 · La Estancia</p>
+  <div class="count" id="count" role="timer" aria-live="off">
+    <div class="unit"><b id="d">00</b><span>días</span></div>
+    <div class="unit"><b id="h">00</b><span>horas</span></div>
+    <div class="unit"><b id="m">00</b><span>minutos</span></div>
+    <div class="unit"><b id="s">00</b><span>segundos</span></div>
+  </div>
+</header>
+
+<section id="viaje">
+  <div class="wrap">
+    <h2>Nuestro viaje hasta ahora</h2>
+    <p class="lead">Toca cualquier foto para verla en grande.</p>
+    <div class="grid" id="grid"></div>
+  </div>
+</section>
+
+<section id="itinerario">
+  <div class="wrap">
+    <h2>Itinerario del día</h2>
+    <p class="lead">Así será nuestra celebración.</p>
+    <ol class="tl" id="tl"></ol>
+  </div>
+</section>
+
+<section id="musica">
+  <div class="wrap">
+    <h2>Nuestra música</h2>
+    <p class="lead">Las canciones que suenan en nuestra historia.</p>
+    <div class="player">
+      <div class="disc" id="disc"></div>
+      <div class="meta"><b id="tt">Sin canción</b><span id="ta"></span></div>
+      <div class="bar"><span id="cur">0:00</span><input type="range" id="seek" min="0" max="100" value="0" step="0.1" aria-label="Progreso"><span id="dur">0:00</span></div>
+      <div class="ctrl">
+        <button id="prev" aria-label="Anterior">&#9198;</button>
+        <button id="play" class="main" aria-label="Reproducir">&#9654;</button>
+        <button id="next" aria-label="Siguiente">&#9197;</button>
+      </div>
+      <p class="note" id="note"></p>
+    </div>
+  </div>
+</section>
+
+<section id="rsvp">
+  <div class="wrap">
+    <h2>Confirma tu asistencia</h2>
+    <p class="lead">Nos hará muy felices contar contigo. Por favor confirma antes del 21 de enero de 2027.</p>
+    <form id="form">
+      <label>Nombre completo <input type="text" id="nombre" required autocomplete="name"></label>
+      <fieldset><legend>¿Nos acompañas?</legend>
+        <label class="opt"><input type="radio" name="asiste" value="Sí, ahí estaré" checked> Sí, ahí estaré</label>
+        <label class="opt"><input type="radio" name="asiste" value="No podré asistir"> No podré asistir</label>
+      </fieldset>
+      <label>Número de personas <input type="number" id="pers" min="1" max="10" value="1"></label>
+      <label>Alergias o mensaje para los novios (opcional) <textarea id="nota"></textarea></label>
+      <button class="btn" type="submit">Enviar confirmación</button>
+      <p class="msg" id="msg" role="status"></p>
+    </form>
+  </div>
+</section>
+
+<section id="mapa">
+  <div class="wrap">
+    <h2>Dónde será</h2>
+    <p class="lead">Te esperamos en Planes de Renderos.</p>
+    <div class="map">
+      <iframe title="Mapa con la ubicación de Finca Lutecia" src="https://www.google.com/maps?q=Finca%20Lutecia%2C%20Km.%209%20Planes%20de%20Renderos%2C%20San%20Salvador%2C%20El%20Salvador&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+      <div class="info">
+        <address>Finca Lutecia, Km. 9 Planes de Renderos,<br>San Salvador, El Salvador</address>
+        <div class="apps">
+          <a class="app" href="https://www.google.com/maps/search/?api=1&query=Finca%20Lutecia%2C%20Km.%209%20Planes%20de%20Renderos%2C%20San%20Salvador%2C%20El%20Salvador" target="_blank" rel="noopener" aria-label="Abrir en Google Maps" title="Google Maps"><img src="img/google-maps.svg" alt="" width="36" height="36"></a>
+          <a class="app" href="https://waze.com/ul?q=Finca%20Lutecia%20Planes%20de%20Renderos%20San%20Salvador&navigate=yes" target="_blank" rel="noopener" aria-label="Abrir en Waze" title="Waze"><img src="img/waze.svg" alt="" width="36" height="36"></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer><b>Williams Orellana &amp; Elizabeth Quintanilla</b>21.02.2027</footer>
+
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Galería de fotos" hidden>
+  <button class="x" id="lbx" aria-label="Cerrar">&#10005;</button>
+  <button class="pv" id="lbp" aria-label="Foto anterior">&#10094;</button>
+  <button class="nx" id="lbn" aria-label="Foto siguiente">&#10095;</button>
+  <div class="stage" id="lbs"><img id="lbi" alt=""></div>
+  <div class="foot"><b id="lbc"></b><small id="lbk"></small></div>
+</div>
+
+<div class="pal" role="group" aria-label="Elegir paleta de colores">
+  <span>Colores</span>
+  <button data-p="champan" style="background:#B08D57" aria-label="Champán"></button>
+  <button data-p="salvia" style="background:#7E9F86" aria-label="Salvia"></button>
+  <button data-p="azul" style="background:#7C97B5" aria-label="Azul empolvado"></button>
+  <button data-p="rosa" style="background:#D08E9A" aria-label="Rosa"></button>
+  <button data-p="noche" style="background:#17141A" aria-label="Noche"></button>
+</div>
+
+<script src="js/main.js"></script>
+</body>
+</html>
