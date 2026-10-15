@@ -1,0 +1,65 @@
+/* ====== Flores y hojas ======
+   Para quitarlas: borra la línea <link ... flores.css> de index.html.
+   Se carga DESPUÉS de styles.css para poder ajustar sus reglas. */
+
+/* --- Portada: esquinas arriba-izquierda y abajo-derecha --- */
+.hero{position:relative;overflow:hidden;padding-bottom:clamp(100px,18vw,130px)}
+.hero>*{position:relative;z-index:1}
+.hero::before,.hero::after{
+  content:"";position:absolute;z-index:0;pointer-events:none;
+  width:clamp(150px,36vw,340px);aspect-ratio:1;
+  background:url("../img/esquina.svg") no-repeat top left/contain;
+}
+.hero::before{top:0;left:0;transform-origin:0 0;animation:mecer-a 9s ease-in-out infinite}
+.hero::after{bottom:0;right:0;transform:rotate(180deg);transform-origin:100% 100%;animation:mecer-b 11s ease-in-out infinite}
+@keyframes mecer-a{0%,100%{transform:rotate(-1deg)}50%{transform:rotate(1.2deg)}}
+@keyframes mecer-b{0%,100%{transform:rotate(179deg)}50%{transform:rotate(181.2deg)}}
+
+/* --- Guirnalda arriba y abajo de la cuenta regresiva --- */
+.hero .date{margin-bottom:clamp(64px,13vw,96px)!important}
+.count{position:relative}
+.count::before,.count::after{
+  content:"";position:absolute;left:0;right:0;aspect-ratio:20/3;pointer-events:none;
+  background:url("../img/guirnalda.svg") no-repeat center/contain;
+}
+.count::before{bottom:calc(100% - 2px)}
+.count::after{top:calc(100% + 4px);transform:scaleY(-1)}
+
+/* --- Secciones: una esquina por sección, alternando lado --- */
+section{position:relative;overflow:hidden}
+section>.wrap{position:relative;z-index:1}
+section::before{
+  content:"";position:absolute;top:0;left:0;z-index:0;pointer-events:none;
+  width:clamp(96px,22vw,230px);aspect-ratio:1;opacity:.6;
+  background:url("../img/esquina.svg") no-repeat top left/contain;
+}
+section:nth-of-type(even)::before{left:auto;right:0;transform:scaleX(-1)}
+
+/* --- Tarjeta "Tu lugar está reservado" --- */
+.reservado{position:relative;overflow:hidden;padding:clamp(84px,22vw,104px) 24px clamp(76px,20vw,96px)}
+.reservado>*{position:relative;z-index:1}
+.reservado::before,.reservado::after{
+  content:"";position:absolute;z-index:0;pointer-events:none;
+  width:clamp(72px,20vw,104px);aspect-ratio:1;opacity:.8;
+  background:url("../img/esquina.svg") no-repeat top left/contain;
+}
+.reservado::before{top:0;left:0}
+.reservado::after{bottom:0;right:0;transform:rotate(180deg)}
+
+/* --- Pie de página --- */
+footer::before{
+  content:"";display:block;width:min(340px,80%);aspect-ratio:20/3;margin:0 auto 10px;
+  background:url("../img/guirnalda.svg") no-repeat center/contain;
+}
+
+/* --- Paleta "noche": un poco más suave para que no deslumbre --- */
+:root[data-palette="noche"] section::before{opacity:.38}
+:root[data-palette="noche"] .hero::before,
+:root[data-palette="noche"] .hero::after,
+:root[data-palette="noche"] .count::before,
+:root[data-palette="noche"] .count::after{filter:brightness(.92) saturate(.9)}
+
+@media(prefers-reduced-motion:reduce){
+  .hero::before{animation:none}
+  .hero::after{animation:none}
+}
