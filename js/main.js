@@ -2,8 +2,8 @@
 var FECHA = "2027-02-21T00:00:00-06:00"; // hora de El Salvador
 var FOTOS = [       // src vacío = imagen de ejemplo; pon tu foto (ruta o data:URI)
   {src:"fotos/FT1.jpg",alt:"Foto 1",cap:"Cuando nos conocimos",c:"tall"},
-  {src:"fotos/FT2.jpg",alt:"Foto 2",cap:"Nuestra primera cita",c:"wide"},
-  {src:"fotos/FT3.jpg",alt:"Foto 3",cap:"Nuestro primer viaje",c:""},
+  {src:"fotos/FT2.jpg",alt:"Foto 2",cap:"Nuestra primera cita",c:"tall", pos:"40% 50%"},
+  {src:"fotos/FT3.jpg",alt:"Foto 3",cap:"Nuestro primer viaje",c:"", pos:"50% 25%"},
   {src:"fotos/FT4.jpg",alt:"Foto 4",cap:"Un día cualquiera",c:""},
   {src:"fotos/FT5.jpg",alt:"Foto 5",cap:"La propuesta",c:"tall"},
   {src:"fotos/FT6.jpg",alt:"Foto 6",cap:"Con la familia",c:""},
@@ -79,9 +79,14 @@ function arte(i){
   var svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+p[0]+'"/><stop offset="1" stop-color="'+p[1]+'"/></linearGradient></defs><rect width="400" height="500" fill="url(#g)"/><circle cx="'+sx+'" cy="'+(150+(i%3)*20)+'" r="46" fill="'+p[5]+'" opacity=".85"/><path d="M0 330 Q100 270 200 320 T400 300 V500H0Z" fill="'+p[2]+'"/><path d="M0 390 Q120 330 240 380 T400 360 V500H0Z" fill="'+p[3]+'"/><path d="M0 450 Q150 410 280 445 T400 430 V500H0Z" fill="'+p[4]+'"/></svg>';
   return "data:image/svg+xml;utf8,"+encodeURIComponent(svg);
 }
-var ITEMS=FOTOS.map(function(f,i){return {src:f.src||arte(i),alt:f.alt,cap:f.cap,c:f.c}});
+//var ITEMS=FOTOS.map(function(f,i){return {src:f.src||arte(i),alt:f.alt,cap:f.cap,c:f.c}});
+//$("grid").innerHTML=ITEMS.map(function(f,i){
+//  return '<button class="ph '+f.c+'" data-i="'+i+'" aria-label="Abrir '+f.alt+'"><img src="'+f.src+'" alt="'+f.alt+'" loading="lazy"><span>'+f.cap+'</span></button>';
+//}).join("");
+
+var ITEMS=FOTOS.map(function(f,i){return {src:f.src||arte(i),alt:f.alt,cap:f.cap,c:f.c,pos:f.pos||"50% 50%"}});
 $("grid").innerHTML=ITEMS.map(function(f,i){
-  return '<button class="ph '+f.c+'" data-i="'+i+'" aria-label="Abrir '+f.alt+'"><img src="'+f.src+'" alt="'+f.alt+'" loading="lazy"><span>'+f.cap+'</span></button>';
+  return '<button class="ph '+f.c+'" data-i="'+i+'" aria-label="Abrir '+f.alt+'"><img src="'+f.src+'" alt="'+f.alt+'" style="object-position:'+f.pos+'" loading="lazy"><span>'+f.cap+'</span></button>';
 }).join("");
 
 // Lightbox
@@ -93,7 +98,12 @@ $("grid").innerHTML=ITEMS.map(function(f,i){
   function close(){lb.classList.remove("on");document.body.style.overflow="";setTimeout(function(){lb.hidden=true},250);if(last)last.focus()}
   $("grid").addEventListener("click",function(e){var b=e.target.closest(".ph");if(b)open(+b.dataset.i)});
   $("lbx").onclick=close;$("lbp").onclick=function(){go(-1)};$("lbn").onclick=function(){go(1)};
-  $("lbs").onclick=function(e){if(e.target===this)close()};
+  //$("lbs").onclick=function(e){if(e.target===this)close()};
+  $("lbs").onclick=function(e){ // tocar fuera de la foto cierra la galería
+    var r=this.getBoundingClientRect(),iw=img.naturalWidth||1,ih=img.naturalHeight||1,
+        s=Math.min(r.width/iw,r.height/ih),w=iw*s,h=ih*s,x=r.left+(r.width-w)/2,y=r.top+(r.height-h)/2;
+    if(e.clientX<x||e.clientX>x+w||e.clientY<y||e.clientY>y+h)close();
+  };
   lb.addEventListener("touchstart",function(e){tx=e.changedTouches[0].clientX},{passive:true});
   lb.addEventListener("touchend",function(e){var dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>50)go(dx<0?1:-1)});
   document.addEventListener("keydown",function(e){
