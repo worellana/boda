@@ -1,12 +1,12 @@
 /* ====== EDITA AQUÍ ====== */
 var FECHA = "2027-02-21T00:00:00-06:00"; // hora de El Salvador
 var FOTOS = [       // src vacío = imagen de ejemplo; pon tu foto (ruta o data:URI)
-  {src:"",alt:"Foto 1",cap:"Cuando nos conocimos",c:"tall"},
-  {src:"",alt:"Foto 2",cap:"Nuestra primera cita",c:"wide"},
-  {src:"",alt:"Foto 3",cap:"Nuestro primer viaje",c:""},
-  {src:"",alt:"Foto 4",cap:"Un día cualquiera",c:""},
-  {src:"",alt:"Foto 5",cap:"La propuesta",c:"tall"},
-  {src:"",alt:"Foto 6",cap:"Con la familia",c:""},
+  {src:"fotos/FT1.jpg",alt:"Foto 1",cap:"Cuando nos conocimos",c:"tall"},
+  {src:"fotos/FT2.jpg",alt:"Foto 2",cap:"Nuestra primera cita",c:"wide"},
+  {src:"fotos/FT3.jpg",alt:"Foto 3",cap:"Nuestro primer viaje",c:""},
+  {src:"fotos/FT4.jpg",alt:"Foto 4",cap:"Un día cualquiera",c:""},
+  {src:"fotos/FT5.jpg",alt:"Foto 5",cap:"La propuesta",c:"tall"},
+  {src:"fotos/FT6.jpg",alt:"Foto 6",cap:"Con la familia",c:""},
   {src:"",alt:"Foto 7",cap:"Celebrando juntos",c:"wide"},
   {src:"",alt:"Foto 8",cap:"Rumbo al altar",c:""}
 ];
@@ -19,7 +19,9 @@ var ITINERARIO = [
   ["9:00 pm","Cierre","Gracias por acompañarnos."]
 ];
 var CANCIONES = [ // {t:"Título", a:"Artista", src:"archivo.mp3"}
-  {t:"Nuestra canción", a:"Ojala que si - Ale Zeguer", src:"musica/Ojala_que_si.mp3"}
+  {t:"Nuestra canción", a:"“Mi vida sin ti” — Jesús Adrián Romero", src:"musica/Mi Vida Sin Ti.mp3"},
+  {t:"Nuestra canción", a:"“Ojala que si” — Ale Zeguer", src:"musica/Ojala_que_si.mp3"}
+
 ];
 var SHEETS_URL = "https://script.google.com/macros/s/AKfycbwfyzlmakCYVzsUO0PftibgO6JGFEVp_VRxES7nzqB553fXQHQfVznBU72u3gEWfnkx/exec";
 /* ========================= */
