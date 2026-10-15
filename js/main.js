@@ -7,7 +7,7 @@ var FOTOS = [       // src vacío = imagen de ejemplo; pon tu foto (ruta o data:
   {src:"fotos/FT4.jpg",alt:"Foto 4",cap:"Un día cualquiera",c:""},
   {src:"fotos/FT5.jpg",alt:"Foto 5",cap:"La propuesta",c:"tall"},
   {src:"fotos/FT6.jpg",alt:"Foto 6",cap:"Con la familia",c:""},
-  {src:"",alt:"Foto 7",cap:"Celebrando juntos",c:"wide"},
+  {src:"fotos/FT7.jpg",alt:"Foto 7",cap:"Celebrando juntos",c:"wide", pos:"50% 40%"},
   {src:"",alt:"Foto 8",cap:"Rumbo al altar",c:""}
 ];
 var ITINERARIO = [
