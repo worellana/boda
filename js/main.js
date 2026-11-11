@@ -1,13 +1,13 @@
 /* ====== EDITA AQUÍ ====== */
 var FECHA = "2027-02-21T00:00:00-06:00"; // hora de El Salvador
-var FOTOS = [       // src vacío = imagen de ejemplo; pon tu foto (ruta o data:URI)
-  {src:"fotos/FT1.jpg",alt:"Foto 1",cap:"Cuando nos conocimos",c:"tall"},
-  {src:"fotos/FT2.jpg",alt:"Foto 2",cap:"Nuestra primera cita",c:"tall", pos:"40% 50%"},
-  {src:"fotos/FT3.jpg",alt:"Foto 3",cap:"Nuestro primer viaje",c:"", pos:"50% 25%"},
-  {src:"fotos/FT4.jpg",alt:"Foto 4",cap:"Un día cualquiera",c:""},
-  {src:"fotos/FT5.jpg",alt:"Foto 5",cap:"La propuesta",c:"tall"},
-  {src:"fotos/FT6.jpg",alt:"Foto 6",cap:"Con la familia",c:""},
-  {src:"fotos/FT7.jpg",alt:"Foto 7",cap:"Celebrando juntos",c:"wide", pos:"50% 40%"},
+var FOTOS = [       // src: foto optimizada. Para una nueva, exporta <nombre>-960.webp y <nombre>-480.webp
+  {src:"fotos/FT1-960.webp",alt:"Foto 1",cap:"Cuando nos conocimos",c:"tall"},
+  {src:"fotos/FT2-960.webp",alt:"Foto 2",cap:"Nuestra primera cita",c:"tall", pos:"40% 50%"},
+  {src:"fotos/FT3-960.webp",alt:"Foto 3",cap:"Nuestro primer viaje",c:"", pos:"50% 25%"},
+  {src:"fotos/FT4-960.webp",alt:"Foto 4",cap:"Un día cualquiera",c:""},
+  {src:"fotos/FT5-960.webp",alt:"Foto 5",cap:"La propuesta",c:"tall"},
+  {src:"fotos/FT6-960.webp",alt:"Foto 6",cap:"Con la familia",c:""},
+  {src:"fotos/FT7-960.webp",alt:"Foto 7",cap:"Celebrando juntos",c:"wide", pos:"50% 40%"},
   {src:"",alt:"Foto 8",cap:"Rumbo al altar",c:""}
 ];
 var ITINERARIO = [
@@ -26,10 +26,13 @@ var CANCIONES = [ // {t:"Título", a:"Artista", src:"archivo.mp3"}
 var SHEETS_URL = "https://script.google.com/macros/s/AKfycbwfyzlmakCYVzsUO0PftibgO6JGFEVp_VRxES7nzqB553fXQHQfVznBU72u3gEWfnkx/exec";
 /* ========================= */
 var $=function(id){return document.getElementById(id)};
+function esperar(ms){return new Promise(function(r){setTimeout(r,ms)})}
 
-// Paletas
+// Paletas (el selector solo aparece con ?palette=1; para quitarlo del todo, borra .pal del HTML)
 (function(){
-  var root=document.documentElement,btns=document.querySelectorAll(".pal button");
+  var root=document.documentElement,btns=document.querySelectorAll(".pal button"),
+      caja=document.querySelector(".pal");
+  if(caja&&!/[?&]palette=1(?:&|$)/.test(location.search))caja.hidden=true;
   function set(p){
     if(p==="champan")root.removeAttribute("data-palette");else root.setAttribute("data-palette",p);
     btns.forEach(function(b){b.setAttribute("aria-pressed",b.dataset.p===p)});
@@ -79,14 +82,19 @@ function arte(i){
   var svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+p[0]+'"/><stop offset="1" stop-color="'+p[1]+'"/></linearGradient></defs><rect width="400" height="500" fill="url(#g)"/><circle cx="'+sx+'" cy="'+(150+(i%3)*20)+'" r="46" fill="'+p[5]+'" opacity=".85"/><path d="M0 330 Q100 270 200 320 T400 300 V500H0Z" fill="'+p[2]+'"/><path d="M0 390 Q120 330 240 380 T400 360 V500H0Z" fill="'+p[3]+'"/><path d="M0 450 Q150 410 280 445 T400 430 V500H0Z" fill="'+p[4]+'"/></svg>';
   return "data:image/svg+xml;utf8,"+encodeURIComponent(svg);
 }
-//var ITEMS=FOTOS.map(function(f,i){return {src:f.src||arte(i),alt:f.alt,cap:f.cap,c:f.c}});
-//$("grid").innerHTML=ITEMS.map(function(f,i){
-//  return '<button class="ph '+f.c+'" data-i="'+i+'" aria-label="Abrir '+f.alt+'"><img src="'+f.src+'" alt="'+f.alt+'" loading="lazy"><span>'+f.cap+'</span></button>';
-//}).join("");
 
 var ITEMS=FOTOS.map(function(f,i){return {src:f.src||arte(i),alt:f.alt,cap:f.cap,c:f.c,pos:f.pos||"50% 50%"}});
+function srcset(src){
+  if(!/-960\.webp$/.test(src))return "";
+  return src.replace("-960.webp","-480.webp")+" 480w, "+src+" 960w";
+}
 $("grid").innerHTML=ITEMS.map(function(f,i){
-  return '<button class="ph '+f.c+'" data-i="'+i+'" aria-label="Abrir '+f.alt+'"><img src="'+f.src+'" alt="'+f.alt+'" style="object-position:'+f.pos+'" loading="lazy"><span>'+f.cap+'</span></button>';
+  var ss=srcset(f.src),tam=f.c==="wide"
+    ?"(max-width:640px) 92vw, 430px"
+    :"(max-width:640px) 46vw, (max-width:860px) 22vw, 205px";
+  return '<button class="ph '+f.c+'" data-i="'+i+'" aria-label="Abrir '+f.alt+'"><img src="'+f.src+'"'+
+    (ss?' srcset="'+ss+'" sizes="'+tam+'"':'')+
+    ' alt="'+f.alt+'" style="object-position:'+f.pos+'" loading="lazy"><span>'+f.cap+'</span></button>';
 }).join("");
 
 // Lightbox
@@ -126,7 +134,7 @@ $("tl").innerHTML=ITINERARIO.map(function(i){
 // Reproductor
 (function(){
   var i=0,au=new Audio(),play=$("play"),seek=$("seek"),disc=$("disc");
-au.volume=0.3;
+  au.preload="none";au.volume=0.3;
   function fmt(x){x=Math.floor(x||0);return Math.floor(x/60)+":"+String(x%60).padStart(2,"0")}
   function setPlaying(v){play.innerHTML=v?"&#10074;&#10074;":"&#9654;";play.setAttribute("aria-label",v?"Pausar":"Reproducir");disc.classList.toggle("on",v)}
   function load(n){
@@ -144,30 +152,20 @@ au.volume=0.3;
   au.onended=function(){if(CANCIONES.length>1){load(i+1);au.play().then(function(){setPlaying(true)})}else setPlaying(false)};
   seek.oninput=function(){if(au.duration)au.currentTime=seek.value/100*au.duration};
   load(0);
-// Reproducción automática (o al primer toque si el navegador la bloquea)
-  var EVENTOS=["pointerdown","keydown","touchend"];
-  function quitar(){EVENTOS.forEach(function(ev){document.removeEventListener(ev,alPrimerToque)})}
-  function intentar(){
-    if(!au.src||!au.paused)return;
-    au.play().then(function(){setPlaying(true);quitar()}).catch(function(){});
-  }
-  function alPrimerToque(e){
-    if(e.target.closest("#play")){quitar();return} // si toca el botón, su propio play se encarga
-    intentar();
-  }
-  EVENTOS.forEach(function(ev){document.addEventListener(ev,alPrimerToque)});
-  intentar();
 })();
 
-// Invitación personalizada (solo se activa con ?i=CODIGO)
-var TOKEN=new URLSearchParams(location.search).get("i");
+// Invitación personalizada (se activa con #i=CODIGO o ?i=CODIGO)
+var TOKEN=new URLSearchParams(location.search).get("i")||
+          new URLSearchParams(location.hash.replace(/^#/,"")).get("i");
 function cargarInvitacion(){
   return fetch(SHEETS_URL+"?i="+encodeURIComponent(TOKEN)+"&t="+Date.now()).then(function(r){return r.json()});
 }
 // Muestra el formulario o la tarjeta de "lugar reservado" según la respuesta guardada
 function estadoRsvp(d){
   var form=$("form"),caja=$("reservado"),lead=$("rsvp-lead"),h=$("rsvp-h"),
-      listo=d.asistencia==="Sí"||d.asistencia==="No";
+      txt=String(d.asistencia||"").trim(),
+      si=/^s[íi]/i.test(txt),no=/^no/i.test(txt),
+      listo=si||no;
   function verFormulario(){
     form.hidden=false;lead.hidden=false;caja.hidden=true;
     h.textContent=listo?"Cambia tu respuesta":"Confirma tu asistencia";
@@ -177,13 +175,14 @@ function estadoRsvp(d){
   form.hidden=true;lead.hidden=true;caja.hidden=false;
   h.textContent="Tu confirmación";
   caja.innerHTML='<b></b><p></p><button type="button" class="cambiar">Cambiar mi respuesta</button>';
-  caja.querySelector("b").textContent=d.asistencia==="Sí"?"¡Tu lugar está reservado!":"Gracias por avisarnos";
-  caja.querySelector("p").textContent=d.asistencia==="Sí"
+  caja.querySelector("b").textContent=si?"¡Tu lugar está reservado!":"Gracias por avisarnos";
+  caja.querySelector("p").textContent=si
     ?(d.personas===1?"Reservamos 1 lugar a tu nombre.":"Reservamos "+d.personas+" lugares a tu nombre.")+" Te esperamos el 21 de febrero."
     :"Lamentamos que no puedas acompañarnos. Te vamos a extrañar.";
   caja.querySelector(".cambiar").onclick=function(){
-    document.querySelectorAll("input[name=asiste]").forEach(function(r){r.checked=r.value.indexOf(d.asistencia)===0});
-    $("pers").value=d.asistencia==="Sí"?d.personas:d.asientos;
+    var clave=si?"Sí":"No";
+    document.querySelectorAll("input[name=asiste]").forEach(function(r){r.checked=r.value.indexOf(clave)===0});
+    $("pers").value=si?(d.personas||d.asientos):d.asientos;
     $("nota").value=d.nota||"";
     verFormulario();
   };
@@ -205,7 +204,22 @@ if(TOKEN){
   cargarInvitacion().then(function(d){
     if(d.ok)mostrarInvitacion(d);
     else{$("para").hidden=false;$("para").textContent="Este código de invitación no es válido."}
-  }).catch(function(){});
+  }).catch(function(){
+    $("para").hidden=false;
+    $("para").textContent="No pudimos cargar tu invitación. Revisa tu conexión e inténtalo de nuevo.";
+  });
+}
+
+// El POST es no-cors: se confirma releyendo el estado, con reintentos por la latencia de Sheets
+function confirmarEstado(intentos){
+  return cargarInvitacion().then(function(d){
+    if(d&&d.ok&&d.asistencia)return d;
+    if(intentos<=0)throw new Error("sin confirmación");
+    return esperar(700).then(function(){return confirmarEstado(intentos-1)});
+  },function(err){
+    if(intentos<=0)throw err;
+    return esperar(700).then(function(){return confirmarEstado(intentos-1)});
+  });
 }
 
 // Confirmación (se guarda en la fila del invitado)
@@ -217,11 +231,8 @@ $("form").addEventListener("submit",function(ev){
       datos=new URLSearchParams({i:TOKEN,asiste:asiste,personas:$("pers").value,nota:$("nota").value.trim()});
   btn.disabled=true;msg.textContent="Enviando…";
   fetch(SHEETS_URL,{method:"POST",mode:"no-cors",body:datos})
-    .then(cargarInvitacion)
-    .then(function(d){
-      if(d.ok&&d.asistencia)estadoRsvp(d);
-      else msg.textContent="No pudimos guardar tu respuesta. Inténtalo de nuevo.";
-    })
-    .catch(function(){msg.textContent="No se pudo enviar. Revisa tu conexión e inténtalo de nuevo."})
+    .then(function(){return confirmarEstado(3)})
+    .then(estadoRsvp)
+    .catch(function(){msg.textContent="No pudimos guardar tu respuesta. Revisa tu conexión e inténtalo de nuevo."})
     .then(function(){btn.disabled=false});
 });
